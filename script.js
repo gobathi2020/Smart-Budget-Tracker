@@ -164,19 +164,43 @@
 
         function initializeApp() {
             document.getElementById('transaction-date').valueAsDate = new Date();
-            updateCategoryOptions();
             updateCurrencyDisplay();
             loadDashboardLayout();
             updateDashboard();
             renderTransactionsList();
             renderGoals();
             renderBudgets();
-            updateFilterOptions();
             showSection('dashboard');
             initializeTheme();
             setMinDateForGoals();
             initializePullToRefresh();
             initializeSwipeGestures();
+            initializeBackgroundAnimation();
+            
+            // Initialize dropdowns with proper timing and error handling
+            setTimeout(() => {
+                try {
+                    console.log('Starting dropdown initialization...');
+                    initializeCustomSelects();
+                    setupCustomSelectHandlers();
+                    updateCategoryOptions();
+                    updateFilterOptions();
+                    console.log('Dropdown initialization completed successfully');
+                } catch (error) {
+                    console.error('Error initializing dropdowns:', error);
+                    // Retry initialization after a longer delay
+                    setTimeout(() => {
+                        try {
+                            initializeCustomSelects();
+                            setupCustomSelectHandlers();
+                            updateCategoryOptions();
+                            updateFilterOptions();
+                        } catch (retryError) {
+                            console.error('Retry failed:', retryError);
+                        }
+                    }, 500);
+                }
+            }, 200);
         }
 
         function setMinDateForGoals() {
@@ -225,7 +249,18 @@
 
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('open');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const isOpen = mobileMenu.classList.contains('open');
+            
+            if (isOpen) {
+                mobileMenu.classList.remove('open');
+                mobileMenuOverlay.classList.remove('open');
+                document.body.style.overflow = '';
+            } else {
+                mobileMenu.classList.add('open');
+                mobileMenuOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
         }
 
         // Theme Functions
@@ -240,14 +275,24 @@
 
         // Transaction Form Handling
         function updateCategoryOptions() {
-            const type = document.getElementById('transaction-type').value;
+            console.log('Updating category options...');
+            
+            const typeSelect = document.getElementById('transaction-type');
             const categorySelect = document.getElementById('transaction-category');
             
-            categorySelect.innerHTML = '';
+            if (!typeSelect || !categorySelect) {
+                console.warn('Missing type or category select elements');
+                return;
+            }
+            
+            const type = typeSelect.value;
+            console.log(`Current transaction type: ${type}`);
             
             // Get appropriate categories based on type
             const categoryList = type === 'savings' ? getDynamicSavingsCategories() : categories[type];
             
+            // Clear and populate native select
+            categorySelect.innerHTML = '';
             categoryList.forEach(category => {
                 const option = document.createElement('option');
                 option.value = category.id;
@@ -255,14 +300,42 @@
                 categorySelect.appendChild(option);
             });
             
-            selectedCategory = categoryList[0].id;
+            // Set selected category
+            selectedCategory = categoryList[0]?.id || '';
             categorySelect.value = selectedCategory;
+            
+            // Update category grid
             updateCategoryGrid();
+            
+            // Update custom select display
+            updateCategoryOptionsCustom();
+            
+            // Update transaction type custom select display
+            const typeTrigger = document.querySelector('[data-select="transaction-type"]');
+            if (typeTrigger) {
+                const typeText = typeTrigger.querySelector('.custom-select-text');
+                const typeOptions = document.querySelectorAll('[data-select="transaction-type"] .custom-select-option');
+                
+                typeOptions.forEach(option => option.classList.remove('selected'));
+                const selectedTypeOption = document.querySelector(`[data-select="transaction-type"] .custom-select-option[data-value="${type}"]`);
+                if (selectedTypeOption) {
+                    selectedTypeOption.classList.add('selected');
+                    if (typeText) {
+                        typeText.textContent = selectedTypeOption.querySelector('.custom-select-option-text').textContent;
+                    }
+                }
+            }
+            
+            console.log('Category options updated successfully');
         }
 
         function updateCategoryGrid() {
-            const type = document.getElementById('transaction-type').value;
+            const typeSelect = document.getElementById('transaction-type');
             const grid = document.getElementById('category-grid');
+            
+            if (!typeSelect || !grid) return;
+            
+            const type = typeSelect.value;
             
             // Get appropriate categories based on type
             const categoryList = type === 'savings' ? getDynamicSavingsCategories() : categories[type];
@@ -283,7 +356,39 @@
 
         function selectCategory(categoryId) {
             selectedCategory = categoryId;
-            document.getElementById('transaction-category').value = categoryId;
+            const categorySelect = document.getElementById('transaction-category');
+            if (categorySelect) {
+                categorySelect.value = categoryId;
+            }
+            
+            // Update custom select display
+            const categoryTrigger = document.querySelector('[data-select="transaction-category"]');
+            if (categoryTrigger) {
+                const typeSelect = document.getElementById('transaction-type');
+                const type = typeSelect ? typeSelect.value : 'income';
+                const categoryList = type === 'savings' ? getDynamicSavingsCategories() : categories[type];
+                const selectedCategoryData = categoryList.find(c => c.id === categoryId);
+                
+                if (selectedCategoryData) {
+                    const triggerText = categoryTrigger.querySelector('.custom-select-text');
+                    if (triggerText) {
+                        triggerText.textContent = `${selectedCategoryData.icon} ${selectedCategoryData.name}`;
+                    }
+                    
+                    // Update selected option in dropdown
+                    const optionsContainer = document.querySelector('[data-select="transaction-category"] .custom-select-options');
+                    if (optionsContainer) {
+                        optionsContainer.querySelectorAll('.custom-select-option').forEach(option => {
+                            option.classList.remove('selected');
+                        });
+                        const selectedOption = optionsContainer.querySelector(`[data-value="${categoryId}"]`);
+                        if (selectedOption) {
+                            selectedOption.classList.add('selected');
+                        }
+                    }
+                }
+            }
+            
             updateCategoryGrid();
         }
 
@@ -790,6 +895,8 @@
                 option.textContent = name;
                 categoryFilter.appendChild(option);
             });
+            
+            updateFilterCategoryOptionsCustom();
         }
 
         function getFilteredTransactions() {
@@ -1045,15 +1152,7 @@
             document.getElementById('custom-category-input').classList.add('hidden');
         }
 
-        // Handle custom category selection
-        document.getElementById('budget-category').addEventListener('change', function() {
-            const customInput = document.getElementById('custom-category-input');
-            if (this.value === 'other-expense') {
-                customInput.classList.remove('hidden');
-            } else {
-                customInput.classList.add('hidden');
-            }
-        });
+        // Custom category selection is now handled in setupCustomSelectHandlers()
 
         document.getElementById('budget-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -1827,7 +1926,10 @@
                     refreshIndicator.style.top = '-60px';
                     isRefreshing = false;
                     
-                    showNotification('Data refreshed successfully!', 'success');
+                    // Only show notification on desktop
+                    if (window.innerWidth > 768) {
+                        showNotification('Data refreshed successfully!', 'success');
+                    }
                 }, 1000);
             }
         }
@@ -1845,6 +1947,536 @@
                 floatingBtn.style.display = 'none';
             } else {
                 floatingBtn.style.display = 'flex';
+            }
+        }
+
+        // Background Animation Functions
+        function initializeBackgroundAnimation() {
+            const animatedBg = document.getElementById('animated-bg');
+            const elements = ['💰', '💎', '🪙', '💵', '💳', '📊', '📈', '🏦', '💸', '🎯'];
+            
+            function createFloatingElement() {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.textContent = elements[Math.floor(Math.random() * elements.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                element.style.animationDelay = Math.random() * 5 + 's';
+                
+                animatedBg.appendChild(element);
+                
+                // Remove element after animation
+                setTimeout(() => {
+                    if (element.parentNode) {
+                        element.parentNode.removeChild(element);
+                    }
+                }, 25000);
+            }
+            
+            // Create initial elements
+            for (let i = 0; i < 8; i++) {
+                setTimeout(createFloatingElement, i * 2000);
+            }
+            
+            // Continue creating elements
+            setInterval(createFloatingElement, 3000);
+        }
+
+        // Filter Toggle Function
+        function toggleFilters() {
+            const filterContainer = document.getElementById('transaction-filters');
+            const toggleBtn = document.querySelector('.filter-toggle-btn');
+            
+            if (filterContainer.classList.contains('hidden')) {
+                filterContainer.classList.remove('hidden');
+                toggleBtn.innerHTML = '<i class="fas fa-times mr-2"></i>Hide Filters';
+            } else {
+                filterContainer.classList.add('hidden');
+                toggleBtn.innerHTML = '<i class="fas fa-filter mr-2"></i>Filter Transactions';
+            }
+        }
+
+        // Custom Select Functionality - Completely Rebuilt
+        function initializeCustomSelects() {
+            console.log('🔄 Initializing custom selects...');
+            
+            try {
+                // Clean up existing event listeners
+                document.removeEventListener('click', globalClickHandler);
+                document.removeEventListener('keydown', handleSelectKeyboard);
+                
+                // Find all select containers
+                const selectContainers = document.querySelectorAll('.modern-select-container');
+                console.log(`📋 Found ${selectContainers.length} select containers`);
+                
+                selectContainers.forEach((container, index) => {
+                    try {
+                        setupSingleSelect(container, index);
+                    } catch (error) {
+                        console.error(`❌ Error setting up select ${index}:`, error);
+                    }
+                });
+                
+                // Set up global event listeners
+                document.addEventListener('click', globalClickHandler);
+                document.addEventListener('keydown', handleSelectKeyboard);
+                
+                console.log('✅ Custom selects initialization completed');
+                
+            } catch (error) {
+                console.error('❌ Critical error in initializeCustomSelects:', error);
+                // Fallback to native selects
+                enableNativeSelects();
+            }
+        }
+        
+        function setupSingleSelect(container, index) {
+            const trigger = container.querySelector('.custom-select-trigger');
+            const nativeSelect = container.querySelector('.modern-select');
+            const optionsContainer = container.querySelector('.custom-select-options');
+            
+            if (!trigger || !nativeSelect || !optionsContainer) {
+                console.warn(`⚠️ Missing elements in container ${index}:`, {
+                    trigger: !!trigger,
+                    nativeSelect: !!nativeSelect,
+                    optionsContainer: !!optionsContainer
+                });
+                return;
+            }
+            
+            const selectId = nativeSelect.id;
+            console.log(`🔧 Setting up select: ${selectId}`);
+            
+            // Store references
+            trigger.dataset.selectId = selectId;
+            optionsContainer.dataset.selectId = selectId;
+            
+            // Remove existing event listeners by cloning elements
+            const newTrigger = trigger.cloneNode(true);
+            const newOptionsContainer = optionsContainer.cloneNode(true);
+            
+            trigger.parentNode.replaceChild(newTrigger, trigger);
+            optionsContainer.parentNode.replaceChild(newOptionsContainer, optionsContainer);
+            
+            // Set up trigger click handler
+            newTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log(`🖱️ Trigger clicked: ${selectId}`);
+                toggleDropdown(selectId);
+            });
+            
+            // Set up option click handlers
+            newOptionsContainer.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const option = e.target.closest('.custom-select-option');
+                if (option && option.dataset.value !== undefined) {
+                    console.log(`✅ Option selected: ${option.dataset.value} for ${selectId}`);
+                    selectCustomOption(selectId, option.dataset.value);
+                }
+            });
+            
+            // Initialize with current native select value
+            syncCustomSelectWithNative(selectId);
+            
+            console.log(`✅ Successfully set up select: ${selectId}`);
+        }
+        
+        function toggleDropdown(selectId) {
+            try {
+                console.log(`🔄 Toggling dropdown: ${selectId}`);
+                
+                const trigger = document.querySelector(`[data-select-id="${selectId}"].custom-select-trigger`);
+                const optionsContainer = document.querySelector(`[data-select-id="${selectId}"].custom-select-options`);
+                
+                if (!trigger || !optionsContainer) {
+                    console.warn(`⚠️ Elements not found for ${selectId}`);
+                    return;
+                }
+                
+                const isCurrentlyOpen = trigger.classList.contains('active');
+                
+                // Close all other dropdowns first
+                closeAllDropdowns();
+                
+                // Toggle current dropdown
+                if (!isCurrentlyOpen) {
+                    trigger.classList.add('active');
+                    optionsContainer.classList.add('show');
+                    console.log(`📂 Opened dropdown: ${selectId}`);
+                } else {
+                    console.log(`📁 Closed dropdown: ${selectId}`);
+                }
+                
+            } catch (error) {
+                console.error(`❌ Error toggling dropdown ${selectId}:`, error);
+            }
+        }
+        
+        function closeAllDropdowns() {
+            try {
+                document.querySelectorAll('.custom-select-trigger.active').forEach(trigger => {
+                    trigger.classList.remove('active');
+                });
+                document.querySelectorAll('.custom-select-options.show').forEach(options => {
+                    options.classList.remove('show');
+                });
+            } catch (error) {
+                console.error('❌ Error closing dropdowns:', error);
+            }
+        }
+        
+        function selectCustomOption(selectId, value) {
+            try {
+                console.log(`🎯 Selecting option: ${value} for ${selectId}`);
+                
+                const nativeSelect = document.getElementById(selectId);
+                const trigger = document.querySelector(`[data-select-id="${selectId}"].custom-select-trigger`);
+                const optionsContainer = document.querySelector(`[data-select-id="${selectId}"].custom-select-options`);
+                
+                if (!nativeSelect || !trigger || !optionsContainer) {
+                    console.warn(`⚠️ Elements missing for option selection: ${selectId}`);
+                    return;
+                }
+                
+                // Update native select
+                nativeSelect.value = value;
+                
+                // Find the selected option to get its text
+                const selectedOption = optionsContainer.querySelector(`[data-value="${value}"]`);
+                if (selectedOption) {
+                    const optionText = selectedOption.querySelector('.custom-select-option-text');
+                    if (optionText) {
+                        // Update trigger text
+                        const triggerText = trigger.querySelector('.custom-select-text');
+                        if (triggerText) {
+                            triggerText.textContent = optionText.textContent;
+                        }
+                        
+                        // Update selected styling
+                        optionsContainer.querySelectorAll('.custom-select-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        selectedOption.classList.add('selected');
+                    }
+                }
+                
+                // Close dropdown
+                closeAllDropdowns();
+                
+                // Handle special cases
+                handleSelectChange(selectId, value);
+                
+                // Trigger change event
+                const changeEvent = new Event('change', { bubbles: true });
+                nativeSelect.dispatchEvent(changeEvent);
+                
+                console.log(`✅ Option selected successfully: ${value} for ${selectId}`);
+                
+            } catch (error) {
+                console.error(`❌ Error selecting option ${value} for ${selectId}:`, error);
+            }
+        }
+        
+        function syncCustomSelectWithNative(selectId) {
+            try {
+                const nativeSelect = document.getElementById(selectId);
+                if (!nativeSelect) return;
+                
+                const currentValue = nativeSelect.value;
+                const currentText = nativeSelect.options[nativeSelect.selectedIndex]?.textContent || '';
+                
+                const trigger = document.querySelector(`[data-select-id="${selectId}"].custom-select-trigger`);
+                const triggerText = trigger?.querySelector('.custom-select-text');
+                
+                if (triggerText && currentText) {
+                    triggerText.textContent = currentText;
+                }
+                
+                // Update selected option styling
+                const optionsContainer = document.querySelector(`[data-select-id="${selectId}"].custom-select-options`);
+                if (optionsContainer) {
+                    optionsContainer.querySelectorAll('.custom-select-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    const selectedOption = optionsContainer.querySelector(`[data-value="${currentValue}"]`);
+                    if (selectedOption) {
+                        selectedOption.classList.add('selected');
+                    }
+                }
+                
+            } catch (error) {
+                console.error(`❌ Error syncing select ${selectId}:`, error);
+            }
+        }
+        
+        function handleSelectChange(selectId, value) {
+            try {
+                // Handle specific select behaviors
+                if (selectId === 'transaction-type') {
+                    setTimeout(() => updateCategoryOptions(), 50);
+                } else if (selectId === 'transaction-category') {
+                    selectedCategory = value;
+                    updateCategoryGrid();
+                } else if (selectId.startsWith('filter-')) {
+                    setTimeout(() => filterTransactions(), 50);
+                } else if (selectId === 'budget-category') {
+                    const customInput = document.getElementById('custom-category-input');
+                    if (customInput) {
+                        if (value === 'other-expense') {
+                            customInput.classList.remove('hidden');
+                        } else {
+                            customInput.classList.add('hidden');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error(`❌ Error handling change for ${selectId}:`, error);
+            }
+        }
+        
+        function globalClickHandler(e) {
+            // Close dropdowns when clicking outside
+            if (!e.target.closest('.modern-select-container')) {
+                closeAllDropdowns();
+            }
+        }
+        
+        function enableNativeSelects() {
+            console.log('🔄 Falling back to native selects');
+            try {
+                // Hide custom elements and show native selects
+                document.querySelectorAll('.custom-select-trigger, .custom-select-options').forEach(el => {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('.modern-select').forEach(select => {
+                    select.style.opacity = '1';
+                    select.style.pointerEvents = 'auto';
+                    select.style.position = 'relative';
+                    select.style.zIndex = '1';
+                });
+            } catch (error) {
+                console.error('❌ Error enabling native selects:', error);
+            }
+        }
+        
+        // Setup custom select handlers for specific functionality
+        function setupCustomSelectHandlers() {
+            console.log('🔧 Setting up custom select handlers...');
+            
+            try {
+                // Handle transaction type change
+                const transactionTypeSelect = document.getElementById('transaction-type');
+                if (transactionTypeSelect) {
+                    transactionTypeSelect.addEventListener('change', function() {
+                        console.log('📝 Transaction type changed to:', this.value);
+                        updateCategoryOptions();
+                    });
+                }
+                
+                // Handle filter changes
+                const filterSelects = ['filter-type', 'filter-category', 'filter-payment', 'filter-date'];
+                filterSelects.forEach(selectId => {
+                    const select = document.getElementById(selectId);
+                    if (select) {
+                        select.addEventListener('change', function() {
+                            console.log(`🔍 Filter ${selectId} changed to:`, this.value);
+                            filterTransactions();
+                        });
+                    }
+                });
+                
+                // Handle budget category change
+                const budgetCategorySelect = document.getElementById('budget-category');
+                if (budgetCategorySelect) {
+                    budgetCategorySelect.addEventListener('change', function() {
+                        console.log('💰 Budget category changed to:', this.value);
+                        const customInput = document.getElementById('custom-category-input');
+                        if (customInput) {
+                            if (this.value === 'other-expense') {
+                                customInput.classList.remove('hidden');
+                            } else {
+                                customInput.classList.add('hidden');
+                            }
+                        }
+                    });
+                }
+                
+                console.log('✅ Custom select handlers set up successfully');
+                
+            } catch (error) {
+                console.error('❌ Error setting up custom select handlers:', error);
+            }
+        }
+        
+        function handleSelectKeyboard(e) {
+            try {
+                const activeSelect = document.querySelector('.custom-select-trigger.active');
+                if (!activeSelect) return;
+                
+                const selectId = activeSelect.dataset.selectId;
+                const optionsContainer = document.querySelector(`[data-select-id="${selectId}"].custom-select-options`);
+                
+                if (!optionsContainer) return;
+                
+                const options = optionsContainer.querySelectorAll('.custom-select-option');
+                const currentSelected = optionsContainer.querySelector('.custom-select-option.selected');
+                let currentIndex = Array.from(options).indexOf(currentSelected);
+                
+                switch (e.key) {
+                    case 'Escape':
+                        closeAllDropdowns();
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        currentIndex = Math.min(currentIndex + 1, options.length - 1);
+                        highlightOption(options[currentIndex]);
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        currentIndex = Math.max(currentIndex - 1, 0);
+                        highlightOption(options[currentIndex]);
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        const highlighted = optionsContainer.querySelector('.custom-select-option.highlighted') || currentSelected;
+                        if (highlighted) {
+                            selectCustomOption(selectId, highlighted.dataset.value);
+                        }
+                        break;
+                }
+            } catch (error) {
+                console.error('❌ Error handling keyboard:', error);
+            }
+        }
+        
+        function highlightOption(option) {
+            const container = option.closest('.custom-select-options');
+            container.querySelectorAll('.custom-select-option').forEach(opt => {
+                opt.classList.remove('highlighted');
+            });
+            option.classList.add('highlighted');
+            
+            // Scroll into view if needed
+            option.scrollIntoView({ block: 'nearest' });
+        }
+        
+        // Update category options for custom select
+        function updateCategoryOptionsCustom() {
+            console.log('🔄 Starting updateCategoryOptionsCustom...');
+            
+            try {
+                const typeSelect = document.getElementById('transaction-type');
+                const optionsContainer = document.getElementById('category-options-list');
+                const nativeSelect = document.getElementById('transaction-category');
+                
+                if (!typeSelect || !optionsContainer || !nativeSelect) {
+                    console.warn('⚠️ Missing elements for category update');
+                    return;
+                }
+                
+                const type = typeSelect.value;
+                console.log(`📝 Current transaction type: ${type}`);
+                
+                // Get appropriate categories based on type
+                const categoryList = type === 'savings' ? getDynamicSavingsCategories() : categories[type];
+                
+                if (!categoryList || categoryList.length === 0) {
+                    console.warn(`⚠️ No categories found for type: ${type}`);
+                    return;
+                }
+                
+                // Clear existing options
+                optionsContainer.innerHTML = '';
+                nativeSelect.innerHTML = '';
+                
+                // Add new options
+                categoryList.forEach((category, index) => {
+                    // Add to native select
+                    const nativeOption = document.createElement('option');
+                    nativeOption.value = category.id;
+                    nativeOption.textContent = `${category.icon} ${category.name}`;
+                    nativeSelect.appendChild(nativeOption);
+                    
+                    // Add to custom select
+                    const option = document.createElement('div');
+                    option.className = `custom-select-option ${index === 0 ? 'selected' : ''}`;
+                    option.dataset.value = category.id;
+                    option.innerHTML = `
+                        <div class="custom-select-option-text">${category.icon} ${category.name}</div>
+                        <div class="custom-select-option-check">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                        </div>
+                    `;
+                    optionsContainer.appendChild(option);
+                });
+                
+                // Update selected category and sync display
+                if (categoryList.length > 0) {
+                    selectedCategory = categoryList[0].id;
+                    nativeSelect.value = selectedCategory;
+                    syncCustomSelectWithNative('transaction-category');
+                    console.log(`✅ Category options updated. Selected: ${selectedCategory}`);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error in updateCategoryOptionsCustom:', error);
+            }
+        }
+        
+        // Update filter category options
+        function updateFilterCategoryOptionsCustom() {
+            try {
+                const filterContainer = document.getElementById('filter-category-options');
+                if (!filterContainer) {
+                    console.warn('⚠️ Filter category options container not found');
+                    return;
+                }
+                
+                const allCategories = new Set();
+                
+                // Add "All Categories" option
+                filterContainer.innerHTML = `
+                    <div class="custom-select-option selected" data-value="all">
+                        <div class="custom-select-option-text">All Categories</div>
+                        <div class="custom-select-option-check">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+                
+                // Add category options from transactions
+                transactions.forEach(t => {
+                    const category = findCategoryById(t.category, t.type);
+                    allCategories.add(`${category.name}|${t.category}`);
+                });
+                
+                Array.from(allCategories).sort().forEach(categoryData => {
+                    const [name, id] = categoryData.split('|');
+                    const option = document.createElement('div');
+                    option.className = 'custom-select-option';
+                    option.dataset.value = id;
+                    option.innerHTML = `
+                        <div class="custom-select-option-text">${name}</div>
+                        <div class="custom-select-option-check">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                        </div>
+                    `;
+                    filterContainer.appendChild(option);
+                });
+                
+                console.log('✅ Filter category options updated');
+                
+            } catch (error) {
+                console.error('❌ Error updating filter category options:', error);
             }
         }
 

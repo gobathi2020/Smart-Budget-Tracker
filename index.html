@@ -3,42 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Budget Tracker Pro - Enhanced</title>
+    <title>Smart Budget Tracker</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50 dark:bg-slate-900">
+    <!-- Animated Background -->
+    <div class="animated-bg" id="animated-bg">
+        <!-- Floating elements will be added here by JavaScript -->
+    </div>
     <!-- Navigation -->
     <nav class="gradient-bg text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <i class="fas fa-wallet text-2xl mr-3"></i>
+                    <div class="relative mr-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                            <i class="fas fa-coins text-white text-lg"></i>
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chart-line text-white text-xs"></i>
+                        </div>
+                    </div>
                     <div>
-                        <h1 class="text-xl font-bold">Smart Budget Tracker</h1>
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">Smart Budget Tracker </h1>
+                        <span class="text-xs opacity-75 text-blue-100">Updated Version</span>
                     </div>
                 </div>
                 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-2">
+                <div class="hidden md:flex items-center space-x-3">
                     <button onclick="showSection('dashboard')" class="nav-btn active" data-section="dashboard">
-                        📊 Dashboard
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Dashboard</span>
                     </button>
                     <button onclick="showSection('transactions')" class="nav-btn" data-section="transactions">
-                        💳 Transactions
+                        <i class="fas fa-credit-card"></i>
+                        <span>Transactions</span>
                     </button>
                     <button onclick="showSection('goals')" class="nav-btn" data-section="goals">
-                        🎯 Goals
+                        <i class="fas fa-bullseye"></i>
+                        <span>Goals</span>
                     </button>
                     <button onclick="showSection('budgets')" class="nav-btn" data-section="budgets">
-                        📈 Budgets
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Budgets</span>
                     </button>
                     <button onclick="showSection('insights')" class="nav-btn" data-section="insights">
-                        🧠 AI Insights
+                        <i class="fas fa-lightbulb"></i>
+                        <span>AI Insights</span>
                     </button>
-                    <button onclick="toggleLayoutCustomization()" class="p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors" title="Customize Layout">
+                    <button onclick="toggleLayoutCustomization()" class="nav-btn" title="Customize Layout" style="padding: 0.75rem; min-width: auto;">
                         <i class="fas fa-cog"></i>
                     </button>
                 </div>
@@ -50,28 +69,57 @@
             </div>
         </div>
         
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="mobile-menu-overlay md:hidden" onclick="toggleMobileMenu()"></div>
+        
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="mobile-menu md:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg">
-            <div class="p-4">
-                <button onclick="toggleMobileMenu()" class="float-right text-gray-600 dark:text-gray-300">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-                <div class="clear-both pt-8 space-y-2">
+        <div id="mobile-menu" class="mobile-menu md:hidden fixed inset-y-0 left-0 z-50 w-72 shadow-2xl">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-wallet text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-gray-800 dark:text-white text-lg">Budget Tracker</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Financial Dashboard</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleMobileMenu()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <nav class="space-y-2">
                     <button onclick="showSection('dashboard'); toggleMobileMenu()" class="nav-btn active" data-section="dashboard">
-                        📊 Dashboard
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Dashboard</span>
                     </button>
                     <button onclick="showSection('transactions'); toggleMobileMenu()" class="nav-btn" data-section="transactions">
-                        💳 Transactions
+                        <i class="fas fa-credit-card"></i>
+                        <span>Transactions</span>
                     </button>
                     <button onclick="showSection('goals'); toggleMobileMenu()" class="nav-btn" data-section="goals">
-                        🎯 Goals
+                        <i class="fas fa-bullseye"></i>
+                        <span>Goals</span>
                     </button>
                     <button onclick="showSection('budgets'); toggleMobileMenu()" class="nav-btn" data-section="budgets">
-                        📈 Budgets
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Budgets</span>
                     </button>
                     <button onclick="showSection('insights'); toggleMobileMenu()" class="nav-btn" data-section="insights">
-                        🧠 AI Insights
+                        <i class="fas fa-lightbulb"></i>
+                        <span>AI Insights</span>
                     </button>
+                </nav>
+                
+                <!-- Mobile Menu Footer -->
+                <div class="absolute bottom-6 left-6 right-6">
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 rounded-xl p-4 text-center">
+                        <div class="text-2xl mb-2">💰</div>
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Smart Financial Manager</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Track • Save • Grow</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Developed by Gobathi with 💖 </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -87,13 +135,22 @@
         <!-- Dashboard Section -->
         <div id="dashboard-section" class="section slide-in">
             <!-- Welcome Section -->
-            <div id="welcome-section" class="text-center py-16 mb-8">
+            <div id="welcome-section" class="text-center mb-8">
                 <div class="max-w-5xl mx-auto">
                     <div class="mb-12">
-                        <i class="fas fa-wallet text-6xl text-blue-600 dark:text-blue-400 mb-6"></i>
-                        <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">Smart Budget Tracker Pro</h1>
+                        <img src="/1.png" alt="Budget Tracker" style="width: 400px; display: block; margin-left: auto; margin-right: auto;">
+                        <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">Smart Budget Tracker</h1>
                         <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">Your comprehensive financial companion for smarter money management</p>
-                        
+
+                        <!--button-->
+                        <div class="space-y-4">
+                        <button onclick="showSection('transactions')" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-rocket mr-3"></i>Start Your Financial Journey
+                        </button>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Begin by adding your first transaction and watch your financial insights grow!</p>
+                        <br/>
+                    </div>
+
                         <!-- Introduction Section -->
                         <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 rounded-2xl p-8 mb-8 text-left">
                             <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">
@@ -102,7 +159,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <p class="text-gray-700 dark:text-gray-300 mb-4">
-                                        Welcome to your journey toward financial freedom! This budget tracker isn't just about recording expenses—it's about 
+                                        Welcome to your journey toward financial freedom! This budget tracker isn't just about recording expenses. It's about 
                                         understanding your money habits, making informed decisions, and building wealth systematically.
                                     </p>
                                     <p class="text-gray-700 dark:text-gray-300 mb-4">
@@ -169,15 +226,10 @@
                             </div>
                         </div>
                     </div>
+
+                    <img src="/2.png" alt=""style="width: 400px; display: block; margin-left: auto; margin-right: auto;">
                     
-                    <div class="space-y-4">
-                        <button onclick="showSection('transactions')" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
-                            <i class="fas fa-rocket mr-3"></i>Start Your Financial Journey
-                        </button>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Begin by adding your first transaction and watch your financial insights grow!</p>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-2">
                         <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                             <i class="fas fa-brain text-3xl text-purple-600 dark:text-purple-400 mb-4"></i>
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">AI Insights</h3>
@@ -206,7 +258,7 @@
             </div>
             
             <!-- Quick Add Buttons -->
-            <div id="quick-add-section" class="quick-add-container" style="display: none;">
+            <div id="quick-add-section" class="text-center quick-add-container" style="display: none;">
                 <button class="quick-add-btn income" onclick="quickAddTransaction('income')">
                     <i class="fas fa-plus-circle text-2xl mb-2"></i>
                     <div class="text-lg font-bold">Add Income</div>
@@ -378,18 +430,77 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
-                            <select id="transaction-type" onchange="updateCategoryOptions()" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="income">💰 Income</option>
-                                <option value="expense">💸 Expense</option>
-                                <option value="savings">🏦 Savings / Investing</option>
-                            </select>
+                            <div class="modern-select-container">
+                                <i class="modern-select-icon fas fa-exchange-alt"></i>
+                                <select id="transaction-type" onchange="updateCategoryOptions()" class="modern-select transaction-type">
+                                    <option value="income">💰 Income</option>
+                                    <option value="expense">💸 Expense</option>
+                                    <option value="savings">🏦 Savings / Investing</option>
+                                </select>
+                                <div class="custom-select-trigger transaction-type" data-select="transaction-type">
+                                    <div class="custom-select-content">
+                                        <div class="custom-select-text">💰 Income</div>
+                                    </div>
+                                    <div class="custom-select-arrow">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M7 10l5 5 5-5z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-options" data-select="transaction-type">
+                                    <div class="custom-select-options-inner">
+                                        <div class="custom-select-option selected" data-value="income">
+                                            <div class="custom-select-option-text">💰 Income</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="custom-select-option" data-value="expense">
+                                            <div class="custom-select-option-text">💸 Expense</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="custom-select-option" data-value="savings">
+                                            <div class="custom-select-option-text">🏦 Savings / Investing</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                            <select id="transaction-category" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="salary">💼 Salary</option>
-                            </select>
+                            <div class="modern-select-container">
+                                <i class="modern-select-icon fas fa-tags"></i>
+                                <select id="transaction-category" class="modern-select category-select">
+                                    <option value="salary">💼 Salary</option>
+                                </select>
+                                <div class="custom-select-trigger category-select" data-select="transaction-category">
+                                    <div class="custom-select-content">
+                                        <div class="custom-select-text">💼 Salary</div>
+                                    </div>
+                                    <div class="custom-select-arrow">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M7 10l5 5 5-5z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-options" data-select="transaction-category">
+                                    <div class="custom-select-options-inner" id="category-options-list">
+                                        <!-- Options will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -411,15 +522,88 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Payment Mode</label>
-                            <select id="payment-mode" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="upi">📱 UPI</option>
-                                <option value="cash">💵 Cash</option>
-                                <option value="bank-transfer">🏦 Bank Transfer</option>
-                                <option value="debit-card">💳 Debit Card</option>
-                                <option value="credit-card">💎 Credit Card</option>
-                                <option value="cheque">📝 Cheque</option>
-                                <option value="wallet">👛 Digital Wallet</option>
-                            </select>
+                            <div class="modern-select-container">
+                                <i class="modern-select-icon fas fa-credit-card"></i>
+                                <select id="payment-mode" class="modern-select payment-mode">
+                                    <option value="upi">📱 UPI</option>
+                                    <option value="cash">💵 Cash</option>
+                                    <option value="bank-transfer">🏦 Bank Transfer</option>
+                                    <option value="debit-card">💳 Debit Card</option>
+                                    <option value="credit-card">💎 Credit Card</option>
+                                    <option value="cheque">📝 Cheque</option>
+                                    <option value="wallet">👛 Digital Wallet</option>
+                                </select>
+                                <div class="custom-select-trigger payment-mode" data-select="payment-mode">
+                                    <div class="custom-select-content">
+                                        <div class="custom-select-text">📱 UPI</div>
+                                    </div>
+                                    <div class="custom-select-arrow">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M7 10l5 5 5-5z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-options" data-select="payment-mode">
+                                    <div class="custom-select-options-inner">
+                                        <div class="custom-select-option selected" data-value="upi">
+                                            <div class="custom-select-option-text">📱 UPI</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="custom-select-option" data-value="cash">
+                                            <div class="custom-select-option-text">💵 Cash</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="custom-select-option" data-value="bank-transfer">
+                                            <div class="custom-select-option-text">🏦 Bank Transfer</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="custom-select-option" data-value="debit-card">
+                                            <div class="custom-select-option-text">💳 Debit Card</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="custom-select-option" data-value="credit-card">
+                                            <div class="custom-select-option-text">💎 Credit Card</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="custom-select-option" data-value="cheque">
+                                            <div class="custom-select-option-text">📝 Cheque</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="custom-select-option" data-value="wallet">
+                                            <div class="custom-select-option-text">👛 Digital Wallet</div>
+                                            <div class="custom-select-option-check">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -447,50 +631,260 @@
                 </form>
             </div>
             
+            <!-- Filter Toggle Button -->
+            <button class="filter-toggle-btn mt-6" onclick="toggleFilters()">
+                <i class="fas fa-filter mr-2"></i>Filter Transactions
+            </button>
+            
             <!-- Transaction Filters -->
-            <div class="filter-container mt-6">
+            <div class="filter-container hidden" id="transaction-filters">
                 <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Filter Transactions</h3>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
-                        <select id="filter-type" onchange="filterTransactions()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded">
-                            <option value="all">All Types</option>
-                            <option value="income">Income</option>
-                            <option value="expense">Expenses</option>
-                            <option value="savings">Savings</option>
-                        </select>
+                        <div class="modern-select-container">
+                            <i class="modern-select-icon fas fa-filter"></i>
+                            <select id="filter-type" onchange="filterTransactions()" class="modern-select">
+                                <option value="all">All Types</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expenses</option>
+                                <option value="savings">Savings</option>
+                            </select>
+                            <div class="custom-select-trigger" data-select="filter-type">
+                                <div class="custom-select-content">
+                                    <div class="custom-select-text">All Types</div>
+                                </div>
+                                <div class="custom-select-arrow">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M7 10l5 5 5-5z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="custom-select-options" data-select="filter-type">
+                                <div class="custom-select-options-inner">
+                                    <div class="custom-select-option selected" data-value="all">
+                                        <div class="custom-select-option-text">All Types</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="income">
+                                        <div class="custom-select-option-text">Income</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="expense">
+                                        <div class="custom-select-option-text">Expenses</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="savings">
+                                        <div class="custom-select-option-text">Savings</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                        <select id="filter-category" onchange="filterTransactions()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded">
-                            <option value="all">All Categories</option>
-                        </select>
+                        <div class="modern-select-container">
+                            <i class="modern-select-icon fas fa-list"></i>
+                            <select id="filter-category" onchange="filterTransactions()" class="modern-select">
+                                <option value="all">All Categories</option>
+                            </select>
+                            <div class="custom-select-trigger" data-select="filter-category">
+                                <div class="custom-select-content">
+                                    <div class="custom-select-text">All Categories</div>
+                                </div>
+                                <div class="custom-select-arrow">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M7 10l5 5 5-5z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="custom-select-options" data-select="filter-category">
+                                <div class="custom-select-options-inner" id="filter-category-options">
+                                    <!-- Options will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Payment Mode</label>
-                        <select id="filter-payment" onchange="filterTransactions()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded">
-                            <option value="all">All Modes</option>
-                            <option value="upi">UPI</option>
-                            <option value="cash">Cash</option>
-                            <option value="bank-transfer">Bank Transfer</option>
-                            <option value="debit-card">Debit Card</option>
-                            <option value="credit-card">Credit Card</option>
-                            <option value="cheque">Cheque</option>
-                            <option value="wallet">Digital Wallet</option>
-                        </select>
+                        <div class="modern-select-container">
+                            <i class="modern-select-icon fas fa-wallet"></i>
+                            <select id="filter-payment" onchange="filterTransactions()" class="modern-select">
+                                <option value="all">All Modes</option>
+                                <option value="upi">UPI</option>
+                                <option value="cash">Cash</option>
+                                <option value="bank-transfer">Bank Transfer</option>
+                                <option value="debit-card">Debit Card</option>
+                                <option value="credit-card">Credit Card</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="wallet">Digital Wallet</option>
+                            </select>
+                            <div class="custom-select-trigger" data-select="filter-payment">
+                                <div class="custom-select-content">
+                                    <div class="custom-select-text">All Modes</div>
+                                </div>
+                                <div class="custom-select-arrow">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M7 10l5 5 5-5z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="custom-select-options" data-select="filter-payment">
+                                <div class="custom-select-options-inner">
+                                    <div class="custom-select-option selected" data-value="all">
+                                        <div class="custom-select-option-text">All Modes</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="upi">
+                                        <div class="custom-select-option-text">UPI</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="cash">
+                                        <div class="custom-select-option-text">Cash</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="bank-transfer">
+                                        <div class="custom-select-option-text">Bank Transfer</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="debit-card">
+                                        <div class="custom-select-option-text">Debit Card</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="credit-card">
+                                        <div class="custom-select-option-text">Credit Card</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="cheque">
+                                        <div class="custom-select-option-text">Cheque</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="wallet">
+                                        <div class="custom-select-option-text">Digital Wallet</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date Range</label>
-                        <select id="filter-date" onchange="filterTransactions()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded">
-                            <option value="all">All Time</option>
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                            <option value="year">This Year</option>
-                        </select>
+                        <div class="modern-select-container">
+                            <i class="modern-select-icon fas fa-calendar"></i>
+                            <select id="filter-date" onchange="filterTransactions()" class="modern-select">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                            </select>
+                            <div class="custom-select-trigger" data-select="filter-date">
+                                <div class="custom-select-content">
+                                    <div class="custom-select-text">All Time</div>
+                                </div>
+                                <div class="custom-select-arrow">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M7 10l5 5 5-5z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="custom-select-options" data-select="filter-date">
+                                <div class="custom-select-options-inner">
+                                    <div class="custom-select-option selected" data-value="all">
+                                        <div class="custom-select-option-text">All Time</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="today">
+                                        <div class="custom-select-option-text">Today</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="week">
+                                        <div class="custom-select-option-text">This Week</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="month">
+                                        <div class="custom-select-option-text">This Month</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select-option" data-value="year">
+                                        <div class="custom-select-option-text">This Year</div>
+                                        <div class="custom-select-option-check">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -733,30 +1127,223 @@
             <form id="budget-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                    <select id="budget-category" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg" required>
-                        <option value="">Select Category</option>
-                        <option value="rent">🏠 Rent/EMI</option>
-                        <option value="groceries">🛒 Groceries</option>
-                        <option value="utilities">💡 Utilities</option>
-                        <option value="healthcare">🏥 Healthcare</option>
-                        <option value="transport">🚗 Transport</option>
-                        <option value="petrol">⛽ Petrol/Fuel</option>
-                        <option value="entertainment">🎬 Entertainment</option>
-                        <option value="dining">🍽️ Dining Out</option>
-                        <option value="shopping">🛍️ Shopping</option>
-                        <option value="travel">✈️ Travel/Trip</option>
-                        <option value="gadgets">📱 Gadgets</option>
-                        <option value="clothing">👕 Clothing</option>
-                        <option value="education">📚 Education</option>
-                        <option value="insurance">🛡️ Insurance</option>
-                        <option value="fitness">💪 Fitness</option>
-                        <option value="beauty">💄 Beauty & Personal Care</option>
-                        <option value="gifts">🎁 Gifts & Donations</option>
-                        <option value="subscriptions">📺 Subscriptions</option>
-                        <option value="maintenance">🔧 Maintenance & Repairs</option>
-                        <option value="taxes">📋 Taxes</option>
-                        <option value="other-expense">❓ Others</option>
-                    </select>
+                    <div class="modern-select-container">
+                        <i class="modern-select-icon fas fa-chart-pie"></i>
+                        <select id="budget-category" class="modern-select category-select" required>
+                            <option value="">Select Category</option>
+                            <option value="rent">🏠 Rent/EMI</option>
+                            <option value="groceries">🛒 Groceries</option>
+                            <option value="utilities">💡 Utilities</option>
+                            <option value="healthcare">🏥 Healthcare</option>
+                            <option value="transport">🚗 Transport</option>
+                            <option value="petrol">⛽ Petrol/Fuel</option>
+                            <option value="entertainment">🎬 Entertainment</option>
+                            <option value="dining">🍽️ Dining Out</option>
+                            <option value="shopping">🛍️ Shopping</option>
+                            <option value="travel">✈️ Travel/Trip</option>
+                            <option value="gadgets">📱 Gadgets</option>
+                            <option value="clothing">👕 Clothing</option>
+                            <option value="education">📚 Education</option>
+                            <option value="insurance">🛡️ Insurance</option>
+                            <option value="fitness">💪 Fitness</option>
+                            <option value="beauty">💄 Beauty & Personal Care</option>
+                            <option value="gifts">🎁 Gifts & Donations</option>
+                            <option value="subscriptions">📺 Subscriptions</option>
+                            <option value="maintenance">🔧 Maintenance & Repairs</option>
+                            <option value="taxes">📋 Taxes</option>
+                            <option value="other-expense">❓ Others</option>
+                        </select>
+                        <div class="custom-select-trigger category-select" data-select="budget-category">
+                            <div class="custom-select-content">
+                                <div class="custom-select-text">Select Category</div>
+                            </div>
+                            <div class="custom-select-arrow">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M7 10l5 5 5-5z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="custom-select-options" data-select="budget-category">
+                            <div class="custom-select-options-inner">
+                                <div class="custom-select-option" data-value="">
+                                    <div class="custom-select-option-text">Select Category</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="rent">
+                                    <div class="custom-select-option-text">🏠 Rent/EMI</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="groceries">
+                                    <div class="custom-select-option-text">🛒 Groceries</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="utilities">
+                                    <div class="custom-select-option-text">💡 Utilities</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="healthcare">
+                                    <div class="custom-select-option-text">🏥 Healthcare</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="transport">
+                                    <div class="custom-select-option-text">🚗 Transport</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="petrol">
+                                    <div class="custom-select-option-text">⛽ Petrol/Fuel</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="entertainment">
+                                    <div class="custom-select-option-text">🎬 Entertainment</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="dining">
+                                    <div class="custom-select-option-text">🍽️ Dining Out</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="shopping">
+                                    <div class="custom-select-option-text">🛍️ Shopping</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="travel">
+                                    <div class="custom-select-option-text">✈️ Travel/Trip</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="gadgets">
+                                    <div class="custom-select-option-text">📱 Gadgets</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="clothing">
+                                    <div class="custom-select-option-text">👕 Clothing</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="education">
+                                    <div class="custom-select-option-text">📚 Education</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="insurance">
+                                    <div class="custom-select-option-text">🛡️ Insurance</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="fitness">
+                                    <div class="custom-select-option-text">💪 Fitness</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="beauty">
+                                    <div class="custom-select-option-text">💄 Beauty & Personal Care</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="gifts">
+                                    <div class="custom-select-option-text">🎁 Gifts & Donations</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="subscriptions">
+                                    <div class="custom-select-option-text">📺 Subscriptions</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="maintenance">
+                                    <div class="custom-select-option-text">🔧 Maintenance & Repairs</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="taxes">
+                                    <div class="custom-select-option-text">📋 Taxes</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="custom-select-option" data-value="other-expense">
+                                    <div class="custom-select-option-text">❓ Others</div>
+                                    <div class="custom-select-option-check">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="custom-category-input" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custom Category Name</label>
@@ -823,8 +1410,6 @@
         </div>
     </div>
 
-
-
     <!-- Floating Add Button -->
     <button class="floating-add-btn" onclick="showFloatingAddMenu()" id="floating-add-btn" title="Quick Add Transaction">
         <i class="fas fa-plus"></i>
@@ -836,9 +1421,9 @@
     <!-- Footer -->
     <footer class="bg-gray-800 dark:bg-gray-900 text-white py-6 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-sm">Created by Gobathi P ❤️</p>
+            <p class="text-sm">Developed by Gobathi with ❤️</p>
         </div>
     </footer>
-    <script src="script.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96be1f57e43a8555',t:'MTc1NDY0Njc2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script src="script.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96bfe967540b8609',t:'MTc1NDY2NTUyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
