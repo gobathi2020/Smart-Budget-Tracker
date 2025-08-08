@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Budget Tracker Pro - Enhanced</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 dark:bg-slate-900">
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-wallet text-2xl mr-3"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">Smart Budget Tracker</h1>
+                    </div>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-2">
+                    <button onclick="showSection('dashboard')" class="nav-btn active" data-section="dashboard">
+                        📊 Dashboard
+                    </button>
+                    <button onclick="showSection('transactions')" class="nav-btn" data-section="transactions">
+                        💳 Transactions
+                    </button>
+                    <button onclick="showSection('goals')" class="nav-btn" data-section="goals">
+                        🎯 Goals
+                    </button>
+                    <button onclick="showSection('budgets')" class="nav-btn" data-section="budgets">
+                        📈 Budgets
+                    </button>
+                    <button onclick="showSection('insights')" class="nav-btn" data-section="insights">
+                        🧠 AI Insights
+                    </button>
+                    <button onclick="toggleLayoutCustomization()" class="p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors" title="Customize Layout">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg">
+            <div class="p-4">
+                <button onclick="toggleMobileMenu()" class="float-right text-gray-600 dark:text-gray-300">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <div class="clear-both pt-8 space-y-2">
+                    <button onclick="showSection('dashboard'); toggleMobileMenu()" class="nav-btn active" data-section="dashboard">
+                        📊 Dashboard
+                    </button>
+                    <button onclick="showSection('transactions'); toggleMobileMenu()" class="nav-btn" data-section="transactions">
+                        💳 Transactions
+                    </button>
+                    <button onclick="showSection('goals'); toggleMobileMenu()" class="nav-btn" data-section="goals">
+                        🎯 Goals
+                    </button>
+                    <button onclick="showSection('budgets'); toggleMobileMenu()" class="nav-btn" data-section="budgets">
+                        📈 Budgets
+                    </button>
+                    <button onclick="showSection('insights'); toggleMobileMenu()" class="nav-btn" data-section="insights">
+                        🧠 AI Insights
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pull-to-refresh" id="main-content">
+        <!-- Refresh Indicator -->
+        <div class="refresh-indicator" id="refresh-indicator">
+            <i class="fas fa-sync-alt"></i>
+        </div>
+        
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="section slide-in">
+            <!-- Welcome Section -->
+            <div id="welcome-section" class="text-center py-16 mb-8">
+                <div class="max-w-5xl mx-auto">
+                    <div class="mb-12">
+                        <i class="fas fa-wallet text-6xl text-blue-600 dark:text-blue-400 mb-6"></i>
+                        <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">Smart Budget Tracker Pro</h1>
+                        <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">Your comprehensive financial companion for smarter money management</p>
+                        
+                        <!-- Introduction Section -->
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 rounded-2xl p-8 mb-8 text-left">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">
+                                <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>Why Smart Budget Tracking Matters
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                        Welcome to your journey toward financial freedom! This budget tracker isn't just about recording expenses—it's about 
+                                        understanding your money habits, making informed decisions, and building wealth systematically.
+                                    </p>
+                                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                        Our app follows the proven <strong>50/30/20 budgeting rule</strong>: allocate 50% of your income to needs, 
+                                        30% to wants, and 20% to savings and investments. This balanced approach ensures you live comfortably 
+                                        while securing your financial future.
+                                    </p>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">🎯 Key Benefits:</h3>
+                                    <ul class="text-gray-700 dark:text-gray-300 space-y-2 text-sm">
+                                        <li>• <strong>Track Every Rupee:</strong> Monitor income, expenses, and savings in real-time</li>
+                                        <li>• <strong>Smart Goal Setting:</strong> Set and achieve financial milestones with automated tracking</li>
+                                        <li>• <strong>AI-Powered Insights:</strong> Get personalized recommendations based on your spending patterns</li>
+                                        <li>• <strong>Budget Control:</strong> Set category limits and receive alerts when approaching them</li>
+                                        <li>• <strong>Visual Analytics:</strong> Understand your finances through interactive charts and graphs</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Smart Budgeting Tips -->
+                        <div class="bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900 dark:to-teal-900 rounded-2xl p-8 mb-8 text-left">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">
+                                <i class="fas fa-brain mr-2 text-green-500"></i>Smart Budgeting & Savings Strategies
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white mb-2">💰 The Emergency Fund Rule</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                                        Build an emergency fund covering 3-6 months of expenses before investing. This safety net protects you from unexpected financial shocks.
+                                    </p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white mb-2">📈 Pay Yourself First</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                                        Automatically save 20% of your income before spending on anything else. Treat savings as a non-negotiable expense.
+                                    </p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white mb-2">🎯 SMART Goals</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                                        Set Specific, Measurable, Achievable, Relevant, and Time-bound financial goals. Break large goals into smaller milestones.
+                                    </p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white mb-2">🔄 Review & Adjust</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                                        Review your budget monthly. Life changes, and your budget should adapt. Use our AI insights to identify improvement areas.
+                                    </p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white mb-2">💳 Avoid Lifestyle Inflation</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                                        When your income increases, resist the urge to increase spending proportionally. Invest the extra income instead.
+                                    </p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white mb-2">📊 Track Everything</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                                        Small expenses add up. Track every transaction to understand where your money goes and identify saving opportunities.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <button onclick="showSection('transactions')" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-rocket mr-3"></i>Start Your Financial Journey
+                        </button>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Begin by adding your first transaction and watch your financial insights grow!</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                            <i class="fas fa-brain text-3xl text-purple-600 dark:text-purple-400 mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">AI Insights</h3>
+                            <p class="text-gray-600 dark:text-gray-300">Get personalized financial advice with 50/30/20 rule tracking</p>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                            <i class="fas fa-tags text-3xl text-green-600 dark:text-green-400 mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Smart Tagging</h3>
+                            <p class="text-gray-600 dark:text-gray-300">Organize transactions with custom tags and filters</p>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                            <i class="fas fa-chart-line text-3xl text-blue-600 dark:text-blue-400 mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Advanced Analytics</h3>
+                            <p class="text-gray-600 dark:text-gray-300">Deep insights into your spending patterns and trends</p>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                            <i class="fas fa-mobile-alt text-3xl text-orange-600 dark:text-orange-400 mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Mobile Ready</h3>
+                            <p class="text-gray-600 dark:text-gray-300">Fully responsive design for all your devices</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Add Buttons -->
+            <div id="quick-add-section" class="quick-add-container" style="display: none;">
+                <button class="quick-add-btn income" onclick="quickAddTransaction('income')">
+                    <i class="fas fa-plus-circle text-2xl mb-2"></i>
+                    <div class="text-lg font-bold">Add Income</div>
+                    <div class="text-sm opacity-90">Salary, freelancing, etc.</div>
+                </button>
+                <button class="quick-add-btn expense" onclick="quickAddTransaction('expense')">
+                    <i class="fas fa-minus-circle text-2xl mb-2"></i>
+                    <div class="text-lg font-bold">Add Expense</div>
+                    <div class="text-sm opacity-90">Bills, shopping, etc.</div>
+                </button>
+                <button class="quick-add-btn savings" onclick="quickAddTransaction('savings')">
+                    <i class="fas fa-piggy-bank text-2xl mb-2"></i>
+                    <div class="text-lg font-bold">Add Savings</div>
+                    <div class="text-sm opacity-90">Investments, goals, etc.</div>
+                </button>
+            </div>
+
+
+
+            <!-- Summary Cards -->
+            <div id="summary-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-8" style="display: none;">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow hover-scale">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm">Total Income</p>
+                            <p class="text-2xl font-bold income-color" id="total-income">₹0</p>
+                        </div>
+                        <div class="bg-green-100 dark:bg-green-900 p-5 rounded-full ml-6">
+                            <i class="fas fa-arrow-up income-color text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow hover-scale">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm">Total Expenses</p>
+                            <p class="text-2xl font-bold text-red-600 dark:text-red-400" id="total-expenses">₹0</p>
+                        </div>
+                        <div class="bg-red-100 dark:bg-red-900 p-5 rounded-full ml-6">
+                            <i class="fas fa-arrow-down text-red-600 dark:text-red-400 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow hover-scale">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm">Total Savings</p>
+                            <p class="text-2xl font-bold savings-color" id="total-savings">₹0</p>
+                        </div>
+                        <div class="bg-blue-100 dark:bg-blue-900 p-5 rounded-full ml-6">
+                            <i class="fas fa-piggy-bank savings-color text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow hover-scale">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm">Balance</p>
+                            <p class="text-2xl font-bold text-purple-600 dark:text-purple-400" id="balance">₹0</p>
+                        </div>
+                        <div class="bg-purple-100 dark:bg-purple-900 p-5 rounded-full ml-6">
+                            <i class="fas fa-balance-scale text-purple-600 dark:text-purple-400 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reset Button (only visible when data exists) -->
+            <div id="reset-button-container" class="text-center mb-8" style="display: none;">
+                <button onclick="showResetConfirmation()" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-medium">
+                    <i class="fas fa-trash mr-2"></i>Reset All Data
+                </button>
+            </div>
+
+            <!-- 50/30/20 Rule Section -->
+            <div id="rule-section" class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow mb-8" style="display: none;">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">50/30/20 Savings Rule</h3>
+                    <div id="rule-status" class="rule-indicator good">
+                        <i class="fas fa-check-circle mr-2"></i>On Track
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold needs-color mb-2" id="needs-percentage">50%</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300 mb-2">Needs (Housing, Food, Bills)</div>
+                        <div class="progress-bar">
+                            <div id="needs-progress" class="progress-fill" style="width: 50%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="needs-amount">₹0</div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="text-3xl font-bold wants-color mb-2" id="wants-percentage">30%</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300 mb-2">Wants (Entertainment, Shopping)</div>
+                        <div class="progress-bar">
+                            <div id="wants-progress" class="progress-fill warning" style="width: 30%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="wants-amount">₹0</div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="text-3xl font-bold savings-color mb-2" id="savings-percentage">20%</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300 mb-2">Savings & Investments</div>
+                        <div class="progress-bar">
+                            <div id="savings-progress" class="progress-fill" style="width: 20%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="savings-rule-amount">₹0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div id="charts-section" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-8" style="display: none;">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Expenses vs Income</h3>
+                    <div class="chart-container">
+                        <canvas id="expenses-vs-income-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Expenses vs Savings</h3>
+                    <div class="chart-container">
+                        <canvas id="expenses-vs-savings-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Income, Expenses & Savings Overview</h3>
+                    <div class="chart-container">
+                        <canvas id="combined-overview-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Top Expense Categories</h3>
+                    <div class="chart-container">
+                        <canvas id="top-expenses-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Transaction Section -->
+        <div id="transactions-section" class="section hidden">
+            <!-- Section Explanation -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/50 dark:to-indigo-900/50 rounded-xl p-6 mb-6 border border-blue-200 dark:border-blue-700">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-blue-100 mb-2">
+                    <i class="fas fa-info-circle mr-2 text-blue-600 dark:text-blue-300"></i>How to Use Transactions
+                </h3>
+                <p class="text-gray-700 dark:text-blue-200 text-sm">
+                    Record all your financial activities here. Add <strong>Income</strong> (salary, freelancing), <strong>Expenses</strong> (rent, food, entertainment), 
+                    and <strong>Savings</strong> (investments, emergency fund). Use tags to organize transactions and the filter options below to find specific entries. 
+                    Each transaction helps build your financial picture and improves AI insights.
+                </p>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow slide-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Add New Transaction</h2>
+                </div>
+                
+                <form id="transaction-form" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
+                            <select id="transaction-type" onchange="updateCategoryOptions()" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="income">💰 Income</option>
+                                <option value="expense">💸 Expense</option>
+                                <option value="savings">🏦 Savings / Investing</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                            <select id="transaction-category" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="salary">💼 Salary</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Category Grid Display -->
+                    <div id="category-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <!-- Categories will be populated here -->
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Amount (<span id="currency-symbol">₹</span>)</label>
+                            <input type="number" id="transaction-amount" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0.00" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date</label>
+                            <input type="date" id="transaction-date" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Payment Mode</label>
+                            <select id="payment-mode" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="upi">📱 UPI</option>
+                                <option value="cash">💵 Cash</option>
+                                <option value="bank-transfer">🏦 Bank Transfer</option>
+                                <option value="debit-card">💳 Debit Card</option>
+                                <option value="credit-card">💎 Credit Card</option>
+                                <option value="cheque">📝 Cheque</option>
+                                <option value="wallet">👛 Digital Wallet</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                            <input type="text" id="transaction-description" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter description">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tags (optional)</label>
+                            <input type="text" id="transaction-tags" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="e.g., #client, #family, #business">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Separate tags with commas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button type="submit" class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                            <i class="fas fa-plus mr-2"></i>Add Transaction
+                        </button>
+                        <button type="button" id="cancel-edit-btn" onclick="cancelEdit()" class="hidden bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors font-medium">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Transaction Filters -->
+            <div class="filter-container mt-6">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Filter Transactions</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
+                        <select id="filter-type" onchange="filterTransactions()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded">
+                            <option value="all">All Types</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expenses</option>
+                            <option value="savings">Savings</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                        <select id="filter-category" onchange="filterTransactions()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded">
+                            <option value="all">All Categories</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Payment Mode</label>
+                        <select id="filter-payment" onchange="filterTransactions()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded">
+                            <option value="all">All Modes</option>
+                            <option value="upi">UPI</option>
+                            <option value="cash">Cash</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                            <option value="debit-card">Debit Card</option>
+                            <option value="credit-card">Credit Card</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="wallet">Digital Wallet</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date Range</label>
+                        <select id="filter-date" onchange="filterTransactions()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search Tags</label>
+                    <input type="text" id="filter-tags" onkeyup="filterTransactions()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded" placeholder="Search by tags...">
+                </div>
+            </div>
+            
+            <!-- Transaction List -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow mt-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Transaction History</h3>
+                </div>
+                
+                <div id="transactions-list" class="space-y-3 max-h-96 overflow-y-auto">
+                    <!-- Transactions will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Goals Section -->
+        <div id="goals-section" class="section hidden">
+            <!-- Section Explanation -->
+            <div class="bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/50 dark:to-teal-900/50 rounded-xl p-6 mb-6 border border-green-200 dark:border-green-700">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-green-100 mb-2">
+                    <i class="fas fa-info-circle mr-2 text-green-600 dark:text-green-300"></i>How to Use Goals
+                </h3>
+                <p class="text-gray-700 dark:text-green-200 text-sm">
+                    Set specific financial targets like buying a car, vacation, or emergency fund. When you create a goal, it appears as a 
+                    savings category in the Transactions section. You can then save money directly towards your goals. Track your progress and stay motivated with 
+                    visual progress indicators. Goals help you save with purpose and achieve your dreams systematically.
+                </p>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow slide-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Savings Goals</h2>
+                    <button onclick="showAddGoalModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add Goal
+                    </button>
+                </div>
+                
+                <div id="goals-list" class="space-y-6">
+                    <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-bullseye text-4xl mb-4"></i>
+                        <p>No goals set yet. Create your first savings goal!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budgets Section -->
+        <div id="budgets-section" class="section hidden">
+            <!-- Section Explanation -->
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/50 dark:to-pink-900/50 rounded-xl p-6 mb-6 border border-purple-200 dark:border-purple-700">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-purple-100 mb-2">
+                    <i class="fas fa-info-circle mr-2 text-purple-600 dark:text-purple-300"></i>How to Use Budgets
+                </h3>
+                <p class="text-gray-700 dark:text-purple-200 text-sm">
+                    Set monthly spending limits for different expense categories like groceries, entertainment, or transport. Budgets help you 
+                    control spending and avoid overspending in any category. The app tracks your progress and alerts you when you're approaching 
+                    or exceeding limits. Use the visual indicators to stay on track with your financial plan.
+                </p>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow slide-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Category Budgets</h2>
+                    <button onclick="showAddBudgetModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Set Budget
+                    </button>
+                </div>
+                
+                <div id="budgets-list" class="space-y-6">
+                    <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-chart-pie text-4xl mb-4"></i>
+                        <p>No budgets set yet. Create your first budget!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights Section -->
+        <div id="insights-section" class="section hidden">
+            <!-- Section Explanation -->
+            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/50 dark:to-blue-900/50 rounded-xl p-6 mb-6 border border-indigo-200 dark:border-indigo-700">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-indigo-100 mb-2">
+                    <i class="fas fa-info-circle mr-2 text-indigo-600 dark:text-indigo-300"></i>How to Use AI Insights
+                </h3>
+                <p class="text-gray-700 dark:text-indigo-200 text-sm">
+                    Get intelligent analysis of your financial habits and personalized recommendations. The AI analyzes your spending patterns, 
+                    tracks your progress toward the 50/30/20 rule, and provides actionable insights to improve your financial health. 
+                    The more transactions you add, the more accurate and helpful these insights become.
+                </p>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow slide-in">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+                    <i class="fas fa-brain mr-2 text-purple-600"></i>AI Financial Insights
+                </h2>
+                
+                <!-- 50/30/20 Rule Explanation -->
+                <div class="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900 dark:to-blue-900 rounded-xl p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+                        <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>Understanding the 50/30/20 Rule
+                    </h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        The 50/30/20 rule is a simple budgeting framework that helps you manage your finances effectively. 
+                        It suggests allocating your after-tax income as follows: <strong>50% for needs</strong> (rent, groceries, utilities), 
+                        <strong>30% for wants</strong> (entertainment, dining out, hobbies), and <strong>20% for savings and debt repayment</strong>. 
+                        This balanced approach ensures you cover essentials while still enjoying life and building financial security.
+                    </p>
+                    
+                    <div id="rule-progress-insight" class="bg-white dark:bg-gray-800 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 dark:text-white mb-2">Your 50/30/20 Progress:</h4>
+                        <div id="rule-insight-content" class="text-sm text-gray-600 dark:text-gray-300">
+                            Add some transactions to see your progress toward the 50/30/20 rule!
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 rounded-xl">
+                        <h4 class="font-semibold mb-2">💰 Spending Efficiency</h4>
+                        <div class="text-2xl font-bold" id="spending-efficiency">85%</div>
+                        <p class="text-sm opacity-90">Above average financial discipline</p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white p-6 rounded-xl">
+                        <h4 class="font-semibold mb-2">📈 Savings Consistency</h4>
+                        <div class="text-2xl font-bold" id="savings-consistency">92%</div>
+                        <p class="text-sm opacity-90">Excellent savings habit</p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-orange-600 to-red-600 text-white p-6 rounded-xl">
+                        <h4 class="font-semibold mb-2">🎯 Budget Adherence</h4>
+                        <div class="text-2xl font-bold" id="budget-adherence">78%</div>
+                        <p class="text-sm opacity-90">Room for improvement</p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-xl">
+                        <h4 class="font-semibold mb-2">📊 Financial Health</h4>
+                        <div class="text-2xl font-bold" id="financial-health">88%</div>
+                        <p class="text-sm opacity-90">Strong financial position</p>
+                    </div>
+                </div>
+                
+                <!-- Enhanced AI Analysis Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                            📈 Spending Trends Analysis
+                        </h4>
+                        <div id="spending-trends" class="space-y-3">
+                            <div class="text-sm text-gray-600 dark:text-gray-300">Add transactions to see detailed spending analysis</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                            🎯 Goal Progress Insights
+                        </h4>
+                        <div id="goal-insights" class="space-y-3">
+                            <div class="text-sm text-gray-600 dark:text-gray-300">Set goals to see progress insights</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Monthly Comparison -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-6">
+                    <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                        📅 Monthly Financial Summary
+                    </h4>
+                    <div id="monthly-summary" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div class="text-2xl mb-2">💸</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300">This Month's Expenses</div>
+                            <div class="text-lg font-bold text-red-600 dark:text-red-400" id="month-expenses">₹0</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div class="text-2xl mb-2">💰</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300">This Month's Income</div>
+                            <div class="text-lg font-bold text-green-600 dark:text-green-400" id="month-income">₹0</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div class="text-2xl mb-2">🏦</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300">This Month's Savings</div>
+                            <div class="text-lg font-bold text-blue-600 dark:text-blue-400" id="month-savings">₹0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">AI Recommendations</h3>
+                    <div id="ai-recommendations" class="space-y-4">
+                        <div class="bg-blue-50 dark:bg-blue-900 p-4 rounded-lg border-l-4 border-blue-500">
+                            <h4 class="font-semibold text-blue-800 dark:text-blue-200">💡 Smart Tip</h4>
+                            <p class="text-blue-700 dark:text-blue-300 text-sm mt-1">Add some transactions to get personalized AI insights and recommendations!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Goal Modal -->
+    <div id="add-goal-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4 w-full">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Add Savings Goal</h3>
+            <form id="goal-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Goal Name</label>
+                    <input type="text" id="goal-name" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg" placeholder="e.g., Buy a Bike" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target Amount</label>
+                    <input type="number" id="goal-amount" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg" placeholder="50000" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target Date</label>
+                    <input type="date" id="goal-date" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg" required>
+                </div>
+                <div class="flex space-x-4">
+                    <button type="button" onclick="hideAddGoalModal()" class="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white py-2 px-4 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                        Add Goal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Budget Modal -->
+    <div id="add-budget-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4 w-full">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Set Category Budget</h3>
+            <form id="budget-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                    <select id="budget-category" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg" required>
+                        <option value="">Select Category</option>
+                        <option value="rent">🏠 Rent/EMI</option>
+                        <option value="groceries">🛒 Groceries</option>
+                        <option value="utilities">💡 Utilities</option>
+                        <option value="healthcare">🏥 Healthcare</option>
+                        <option value="transport">🚗 Transport</option>
+                        <option value="petrol">⛽ Petrol/Fuel</option>
+                        <option value="entertainment">🎬 Entertainment</option>
+                        <option value="dining">🍽️ Dining Out</option>
+                        <option value="shopping">🛍️ Shopping</option>
+                        <option value="travel">✈️ Travel/Trip</option>
+                        <option value="gadgets">📱 Gadgets</option>
+                        <option value="clothing">👕 Clothing</option>
+                        <option value="education">📚 Education</option>
+                        <option value="insurance">🛡️ Insurance</option>
+                        <option value="fitness">💪 Fitness</option>
+                        <option value="beauty">💄 Beauty & Personal Care</option>
+                        <option value="gifts">🎁 Gifts & Donations</option>
+                        <option value="subscriptions">📺 Subscriptions</option>
+                        <option value="maintenance">🔧 Maintenance & Repairs</option>
+                        <option value="taxes">📋 Taxes</option>
+                        <option value="other-expense">❓ Others</option>
+                    </select>
+                </div>
+                <div id="custom-category-input" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custom Category Name</label>
+                    <input type="text" id="custom-category-name" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg" placeholder="Enter custom category">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Monthly Budget Limit</label>
+                    <input type="number" id="budget-limit" class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg" placeholder="5000" required>
+                </div>
+                <div class="flex space-x-4">
+                    <button type="button" onclick="hideAddBudgetModal()" class="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white py-2 px-4 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                        Set Budget
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Layout Settings Modal -->
+    <div id="layout-modal" class="layout-modal">
+        <div class="layout-modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white">
+                    <i class="fas fa-cog mr-3"></i>Customize Dashboard Layout
+                </h3>
+                <button onclick="toggleLayoutCustomization()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Drag and drop to reorder dashboard sections:</p>
+            <div id="layout-items" class="space-y-3 mb-6">
+                <!-- Layout items will be populated here -->
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="saveLayoutOrder()" class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    <i class="fas fa-save mr-2"></i>Save Layout
+                </button>
+                <button onclick="resetLayoutOrder()" class="flex-1 bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors font-medium">
+                    <i class="fas fa-undo mr-2"></i>Reset to Default
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="reset-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4">
+            <div class="text-center">
+                <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Reset All Data</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure? This will delete all your transactions, goals, and budgets permanently.</p>
+                <div class="flex space-x-4">
+                    <button onclick="hideResetConfirmation()" class="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white py-2 px-4 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
+                        Cancel
+                    </button>
+                    <button onclick="resetAllData()" class="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
+                        Yes, Delete All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Floating Add Button -->
+    <button class="floating-add-btn" onclick="showFloatingAddMenu()" id="floating-add-btn" title="Quick Add Transaction">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Swipe Feedback -->
+    <div class="swipe-feedback" id="swipe-feedback"></div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-gray-900 text-white py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm">Created by Gobathi P ❤️</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96be1f57e43a8555',t:'MTc1NDY0Njc2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
