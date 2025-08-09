@@ -2,6 +2,10 @@
 
 A fully responsive, modern personal finance tracker built with HTML, CSS, and JavaScript.  It helps users **track income, expenses, and savings goals**, visualize spending habits, and follow budgeting rules like the **50:30:20** principle — all with a **sleek, mobile-friendly UI**.
 
+## 🛠 Deployment
+
+This project is live at:  🔗 [https://gobathi2020.github.io/Smart-budget-tracker/](https://gobathi2020.github.io/Smart-budget-tracker/)
+
 
 ## 🚀 Features
 
@@ -64,8 +68,6 @@ A fully responsive, modern personal finance tracker built with HTML, CSS, and Ja
 - Add income, expenses, or savings goals.
 - Use filters to search transactions.
 - View AI insights to check if you follow the 50:30:20 rule.
-- Switch to dark mode for a modern look.
-
 
 
 ## 🔮 Future Enhancements
